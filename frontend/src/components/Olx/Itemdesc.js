@@ -3,12 +3,14 @@ import React from "react";
 import MenuIcon from '@mui/icons-material/Menu';
 import { useEffect,useState } from "react";
 import FavoriteIcon from '@mui/icons-material/Favorite';
-
+// import { Navigation, Pagination } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import { db } from '../../config/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 
 function Itemdesc(){
@@ -18,7 +20,7 @@ function Itemdesc(){
     'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250',
     'https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60',
   ];
-
+  const [itemData, setItemData] = useState(null);
   const desc=['desc1','desc2','map these descriptions']  // map these descriptions
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
 
@@ -28,6 +30,32 @@ function Itemdesc(){
     };
 
     window.addEventListener('resize', handleResize);
+    /////////////////////////
+    const id= "Up7qWbuKjE2OBICfalCK";
+      
+    if (id) {
+      const getItemData = async () => {
+        try {
+          const resellDocRef = doc(db,'resellDoc',id);
+          const resellDoc = await getDoc(resellDocRef);
+
+          if (resellDoc.exists()) {
+            const resellData = resellDoc.data();
+            setItemData(resellData);
+            console.log('Item Data:', resellData);
+          } else {
+            console.log('Item document does not exist');
+          }
+        } catch (error) {
+          console.error('Error fetching Item data:', error.message);
+        }
+      };
+
+      getItemData();
+    } else {
+      console.log('User UID not found in local storage');
+    }
+    ////////////////////
 
     return () => {
       window.removeEventListener('resize', handleResize);
