@@ -38,9 +38,10 @@ export default function SignIn() {
       setError(null); // Clear any previous errors
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      localStorage.setItem('user_email', user.uid);
+      localStorage.setItem('uid', user.uid);
+      localStorage.setItem('user_email', email);
       //
-      const uid = localStorage.getItem('user_email');
+      const uid = localStorage.getItem('uid');
       
       if (uid) {
         const getUserData = async () => {

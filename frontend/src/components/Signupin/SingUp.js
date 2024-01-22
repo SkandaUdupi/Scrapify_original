@@ -70,8 +70,8 @@ export default function SignUp() {
         console.error('Error adding/updating document: ', error);
       }
 
-      // localStorage.setItem('user_email', email);
-      localStorage.setItem('user_email', user.uid);
+      localStorage.setItem('user_email', email);
+      localStorage.setItem('uid', user.uid);
       navigate('/resell');
     } catch (error) {
       console.error('Error signing up:', error.message);

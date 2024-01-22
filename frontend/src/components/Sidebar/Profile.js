@@ -89,7 +89,7 @@ function Profile(){
 
   useEffect(() => {
     // Get UID from local storage
-    const uid = localStorage.getItem('user_email');
+    const uid = localStorage.getItem('uid');
       
     if (uid) {
       const getUserData = async () => {
