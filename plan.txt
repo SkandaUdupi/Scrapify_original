@@ -1,0 +1,64 @@
+
+PLAN #######################################################################################
+
+#November 
+
+Download the kabaadiwala app from playstore . Select some random locations in Indore to view .We will be doing something same ( recycling ) .
+
+task -1 : sidebar (same for both recycling and reselling ) and its inner contents (only recycling part should be completed ) 
+task -2 : sell scrap and rate list page
+
+additional task : progress report should be done when colege asks for evaluation 
+-> The above tasks should be mandatorily finished within November since we would be having 2nd evaluation
+
+# December 
+
+task -3 : backend development starts here
+task -4 : should be able to fetch and view locations (maps)
+task -5 : One very simple interface for the pickup person
+
+-> complete frontend verification and working of recycling  part should be completed here 
+-> backend verification and testing should be completed within middle of Jan 
+
+## Jan 
+
+We would be refering something like OLX but a bit more simple way 
+
+task -6 : sidebar inner contents page of reselling part should be completed 
+task -7 : should be able to add a new product 
+task -8 : Hope that the recycling part backend is finished in time and tested well
+
+-> backend development starts here again for reselling part 
+
+# Feb 
+
+task -9 : Should  be able to view products and search products (searching and filtering)
+task -10 : backend development should end within this month 
+task -11 : rigorous testing and verification , correcting mistakes etc should be done  
+
+-> In final year its completly project what college wants . So we need to gear up fast !!
+
+ROLES #######################################################################################
+
+Frontend development :
+
+-> create UI using dummy data , make it responsive 
+
+Contributors : Skanda , Rohan 
+
+Backend development :
+
+-> create database , API's
+-> rigorous testing and verification , finding mistakes 
+
+Contributors : Prateek , Prajwal 
+
+##############################################################################################
+If there is anything else , change in plans , suggestions put it below 
+
+-> .......
+
+
+
+
+
