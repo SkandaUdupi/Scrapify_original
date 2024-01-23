@@ -38,7 +38,7 @@ function Itemdesc(){
         try {
           const resellDocRef = doc(db,'resellDoc',id);
           const resellDoc = await getDoc(resellDocRef);
-
+          
           if (resellDoc.exists()) {
             const resellData = resellDoc.data();
             setItemData(resellData);
