@@ -61,12 +61,10 @@ export default function SignIn() {
         console.log('User UID not found in local storage');
       }
 
-      //
-      // console.log(data);
       navigate('/resell');
     } catch (error) {
       console.error('Error signing in:', error.message);
-      setError(error.message); // Set the error message for display
+      setError('Incorrect email / password !!!'); // Set the error message for display
     }
   };
 

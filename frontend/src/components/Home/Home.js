@@ -21,6 +21,7 @@ import Navbar from "../Sidebar/Navbar";
 
 import { Route , Routes , BrowserRouter as Router, Navigate, useNavigate,Link} from "react-router-dom";
 import { useState,useEffect } from 'react';
+import Editform from "../Olx/Editform";
 
 function Condition({useremail}){
     console.log(useremail,localStorage.getItem('uid'))
@@ -55,11 +56,12 @@ function Home(){
              <Route path="/resell" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Resell useremail={useremail}/></>}/>
              <Route path="/rates" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Scrap useremail={useremail}/></>}/>
              <Route path="/sellform" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Sell_Form useremail={useremail}/></>}/>
+             <Route path="/editform" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Editform useremail={useremail}/></>}/>
              <Route path="/pickuprequests" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Pickuprequests useremail={useremail}/></>}/>
              <Route path="/pickup" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Pickup useremail={useremail}/></>}/>
              <Route path="/profile" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Profile useremail={useremail}/></>}/>
              <Route path="/myads" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Myads useremail={useremail}/></>}/>
-             <Route path="/resell/:id" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Itemdesc useremail={useremail}/></>}/>
+             <Route path="/resell/:id/:showcontact?" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Itemdesc useremail={useremail}/></>}/>
              <Route path="/" element={<Condition useremail={useremail}/>}/>     
             </Routes>
         </Router>

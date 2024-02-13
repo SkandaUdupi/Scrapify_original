@@ -23,12 +23,16 @@ import { db } from '../../../config/firebase';
 import { imgDB } from '../../../config/firebase';
 import { v4 } from "uuid";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { useNavigate } from 'react-router-dom';
+import { deleteObject } from 'firebase/storage';
+
 
 
 const MobilesForm = ({flag,editdata}) => {
   const [imagesArray,setImagesArray]=useState([]);
   const [imageflag,setimageflag]=useState('close');
   const fileInputRef = useRef(null);
+  const navigate=useNavigate();
 
   const [formData, setFormData] = useState({
     category:'Mobiles',
@@ -41,7 +45,8 @@ const MobilesForm = ({flag,editdata}) => {
     address:'',
     postedDate: new Date().toLocaleDateString('en-GB'),
     images:[],
-    useremail:localStorage.getItem('user_email')
+    useremail:localStorage.getItem('user_email'),
+    status:'active'
   });
 
   useEffect(()=>{
@@ -53,8 +58,28 @@ const MobilesForm = ({flag,editdata}) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
-  const handleDeleteimage = (index) => {
-    setImagesArray((prevImages) => prevImages.filter((_, i) => i !== index));
+  const handleDeleteimage =async (index) => {
+    // setImagesArray((prevImages) => prevImages.filter((_, i) => i !== index));
+    const imageUrl = imagesArray[index];
+    const imageRef = ref(imgDB, imageUrl);
+    try {
+      await deleteObject(imageRef);
+      setImagesArray((prevImages) => {
+        const newImagesArray = [...prevImages];
+        newImagesArray.splice(index, 1);
+        return newImagesArray;
+      });
+
+      // Update Firestore document with new images array
+      const updatedImages = imagesArray.filter((_, i) => i !== index);
+      const resellDocRef = doc(db, 'resellDoc', formData.id);
+      console.log(imagesArray);
+      formData.images = updatedImages;
+      await setDoc(resellDocRef, { ...formData, images: updatedImages });
+
+    } catch (error) {
+      console.error("Error deleting image or updating document:", error);
+    }
   };
 
 
@@ -88,6 +113,15 @@ const MobilesForm = ({flag,editdata}) => {
       } catch (error) {
         console.error('Error adding/updating document: ', error);
       }
+      navigate("/myads")
+    }
+    else{
+      // edit logic here
+      //u will get the id from formdata
+      const resellDocRef = doc(db, 'resellDoc', formData.id);
+      await setDoc(resellDocRef, formData);
+      
+      navigate("/myads")
     }
     console.log(formData);
   };
