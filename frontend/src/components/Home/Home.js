@@ -22,6 +22,8 @@ import Navbar from "../Sidebar/Navbar";
 import { Route , Routes , BrowserRouter as Router, Navigate, useNavigate,Link} from "react-router-dom";
 import { useState,useEffect } from 'react';
 import Editform from "../Olx/Editform";
+import Chatroom from "../Olx/Chat/Chatroom";
+import Chats from "../Olx/Chat/Chats";
 
 function Condition({useremail}){
     console.log(useremail,localStorage.getItem('uid'))
@@ -62,7 +64,13 @@ function Home(){
              <Route path="/profile" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Profile useremail={useremail}/></>}/>
              <Route path="/myads" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Myads useremail={useremail}/></>}/>
              <Route path="/resell/:id/:showcontact?" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Itemdesc useremail={useremail}/></>}/>
-             <Route path="/" element={<Condition useremail={useremail}/>}/>     
+             
+              <Route path="/allchats" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Chatroom useremail={useremail}/></>}></Route>
+
+              <Route path="/chat/:receiver" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Chats useremail={useremail}/></>}></Route>
+
+             <Route path="/" element={<Condition useremail={useremail}/>}/>   
+               
             </Routes>
         </Router>
 

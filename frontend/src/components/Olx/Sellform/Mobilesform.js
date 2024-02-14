@@ -18,8 +18,8 @@ import { AddPhotoAlternate, Camera, Delete } from '@mui/icons-material';
 import Webcam from "react-webcam";
 import Webcamera from './Webcam';
 
-import { collection, addDoc, doc, setDoc } from 'firebase/firestore';
-import { db } from '../../../config/firebase';
+import { collection, addDoc, doc, setDoc ,serverTimestamp} from 'firebase/firestore'
+;import { db } from '../../../config/firebase';
 import { imgDB } from '../../../config/firebase';
 import { v4 } from "uuid";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -46,7 +46,8 @@ const MobilesForm = ({flag,editdata}) => {
     postedDate: new Date().toLocaleDateString('en-GB'),
     images:[],
     useremail:localStorage.getItem('user_email'),
-    status:'active'
+    status: 'active',
+    timestamp: serverTimestamp()
   });
 
   useEffect(()=>{

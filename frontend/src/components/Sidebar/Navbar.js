@@ -11,7 +11,7 @@ function Navbar({useremail,handleLogout}){
   };
 return(
     <>
-    <AppBar position="static" sx={{backgroundColor:'white',color:'black',border:'none'}}>
+    <AppBar position="sticky" sx={{backgroundColor:'white',color:'black',border:'none',top:0}} id="scrapify_navbar">
         <Toolbar>
           <IconButton
             size="large"

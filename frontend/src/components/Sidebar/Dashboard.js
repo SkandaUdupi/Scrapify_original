@@ -18,7 +18,8 @@ import {
   Favorite,
   CurrencyRupee,
   Sell,
-  Recycling
+  Recycling,
+  Chat
 } from "@mui/icons-material";
 const Dashboard = ({onClose,useremail,handleLogout}) => {
 
@@ -87,6 +88,15 @@ const Dashboard = ({onClose,useremail,handleLogout}) => {
               <Sell />
             </ListItemIcon>
             <ListItemText primary="Resell" />
+          </ListItemButton>
+        </ListItem>
+
+        <ListItem disablePadding>
+          <ListItemButton component="a" href="/allchats">
+            <ListItemIcon>
+              <Chat />
+            </ListItemIcon>
+            <ListItemText primary="Chats" />
           </ListItemButton>
         </ListItem>
 
