@@ -22,7 +22,7 @@ import { doc, getDoc } from 'firebase/firestore';
 
 const defaultTheme = createTheme();
 
-export default function SignIn() {
+export default function SignIn({setUserEmail}) {
   const navigate = useNavigate();
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -40,7 +40,7 @@ export default function SignIn() {
       const user = userCredential.user;
       localStorage.setItem('uid', user.uid);
       localStorage.setItem('user_email', email);
-      //
+      setUserEmail(email)
       const uid = localStorage.getItem('uid');
       
       if (uid) {
@@ -61,7 +61,7 @@ export default function SignIn() {
         console.log('User UID not found in local storage');
       }
 
-      navigate('/resell');
+      navigate('/');
     } catch (error) {
       console.error('Error signing in:', error.message);
       setError('Incorrect email / password !!!'); // Set the error message for display

@@ -13,6 +13,7 @@ import {
 import {
   Home,
   LocalShipping,
+  Login,
   Logout,
   Person,
   Favorite,
@@ -24,7 +25,8 @@ import {
 const Dashboard = ({onClose,useremail,handleLogout}) => {
 
   const dashboardRef = useRef();
-  
+  const logkey = (useremail == null || useremail == undefined || useremail == undefined || useremail=='null') ? false : true;
+  console.log(logkey,"logkey",useremail)
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dashboardRef.current && !dashboardRef.current.contains(event.target)) {
@@ -54,7 +56,7 @@ const Dashboard = ({onClose,useremail,handleLogout}) => {
         {/* <Divider variant="inset" component="li" /> */}
 
         <ListItem disablePadding>
-          <ListItemButton component="a" href="/profile">
+          <ListItemButton component="a" href={logkey?"/profile":"/signin"}>
             <ListItemIcon>
               <Person />
             </ListItemIcon>
@@ -65,7 +67,7 @@ const Dashboard = ({onClose,useremail,handleLogout}) => {
         <Divider/>
 
         <ListItem disablePadding>
-          <ListItemButton component="a" href="/resell">
+          <ListItemButton component="a" href={logkey?"/":"/signin"}>
             <ListItemIcon>
               <Home />
             </ListItemIcon>
@@ -74,7 +76,7 @@ const Dashboard = ({onClose,useremail,handleLogout}) => {
         </ListItem>
 
         <ListItem disablePadding>
-          <ListItemButton component="a" href="/myads">
+          <ListItemButton component="a" href={logkey?"/myads":"/signin"}>
             <ListItemIcon>
               <Favorite />
             </ListItemIcon>
@@ -83,7 +85,7 @@ const Dashboard = ({onClose,useremail,handleLogout}) => {
         </ListItem>
 
         <ListItem disablePadding>
-          <ListItemButton component="a" href="/sellform">
+          <ListItemButton component="a" href={logkey?"/sellform":"/signin"}>
             <ListItemIcon>
               <Sell />
             </ListItemIcon>
@@ -92,7 +94,7 @@ const Dashboard = ({onClose,useremail,handleLogout}) => {
         </ListItem>
 
         <ListItem disablePadding>
-          <ListItemButton component="a" href="/allchats">
+          <ListItemButton component="a" href={logkey?"/allchats":"/signin"}>
             <ListItemIcon>
               <Chat />
             </ListItemIcon>
@@ -103,7 +105,7 @@ const Dashboard = ({onClose,useremail,handleLogout}) => {
         <Divider/>
 
         <ListItem disablePadding>
-          <ListItemButton component="a" href="/pickup">
+          <ListItemButton component="a" href={logkey?"/pickup":"/signin"}>
             <ListItemIcon>
             {/* <Recycling />  */}
               <LocalShipping />
@@ -113,7 +115,7 @@ const Dashboard = ({onClose,useremail,handleLogout}) => {
         </ListItem>
 
         <ListItem disablePadding>
-          <ListItemButton component="a" href="/pickuprequests">
+          <ListItemButton component="a" href={logkey?"/pickuprequests":"/signin"}>
             <ListItemIcon>
             <Recycling />
               {/* <LocalShipping /> */}
@@ -123,7 +125,7 @@ const Dashboard = ({onClose,useremail,handleLogout}) => {
         </ListItem>
 
         <ListItem disablePadding>
-          <ListItemButton component="a" href="/rates">
+          <ListItemButton component="a" href={logkey?"/rates":"/signin"}>
             <ListItemIcon>
               <CurrencyRupee />
             </ListItemIcon>
@@ -133,14 +135,23 @@ const Dashboard = ({onClose,useremail,handleLogout}) => {
 
         <Divider/>
         
-        <ListItem disablePadding>
+       {
+        (logkey)?( <ListItem disablePadding>
           <ListItemButton component="a" href="/signin" onClick={handleLogout}>
             <ListItemIcon>
               <Logout />
             </ListItemIcon>
             <ListItemText primary="Log Out" />
           </ListItemButton>
-        </ListItem>
+        </ListItem>):( <ListItem disablePadding>
+          <ListItemButton component="a" href="/signin">
+            <ListItemIcon>
+              <Login />
+            </ListItemIcon>
+            <ListItemText primary="Log In" />
+          </ListItemButton>
+        </ListItem>)
+       }
 
        
       </List>

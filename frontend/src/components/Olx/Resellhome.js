@@ -19,7 +19,7 @@ function Resell(){
   const [items,setitems]=useState();
   const [filterkey,setfilterkey]=useState('');
   // const [searchkey,setsearchkey]=useState('');
-  const pagelimit=5;
+  const pagelimit=10;
   const [pageno,setpageno]=useState(1);
   const navigate =useNavigate();
   
@@ -56,15 +56,32 @@ function Resell(){
     if(items.length<pagelimit) return;
     
     const lastData = items[items.length - 1];
-    const q = query(
-      collection(db, 'resellDoc'),
+  
+    let q;
+    if(filterkey===''){
+      q= query(collection(db, 'resellDoc'),
       orderBy('timestamp', 'desc'),
       startAfter(lastData['timestamp']),
       limit(pagelimit)
-    );
-  
+      );
+    }
+    else{
+      q = query(
+        collection(db, 'resellDoc'),
+        or(where('vehicleType','==',filterkey),where('electronicsType','==',filterkey),
+        where('mobileType','==',filterkey),
+        where('propertyType','==',filterkey)
+        ),
+        
+        orderBy('timestamp', 'desc'),
+        startAfter(lastData['timestamp']),
+        limit(pagelimit)
+      );
+    }
+
     const querySnapshot = await getDocs(q);
     const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    if(data.length==0)return;
     setpageno((prevpageno)=>prevpageno+1)
     console.log(data);
     setitems(data);
@@ -75,13 +92,29 @@ function Resell(){
     if(pageno===1) return;
     
     const firstData = items[0];
-    const q = query(
-      collection(db, 'resellDoc'),
+  
+    let q;
+    if(filterkey===''){
+      q= query(collection(db, 'resellDoc'),
       orderBy('timestamp', 'desc'),
       endBefore(firstData['timestamp']),
-      limitToLast(pagelimit)
-    );
-  
+      limit(pagelimit)
+      );
+    }
+    else{
+      q = query(
+        collection(db, 'resellDoc'),
+        or(where('vehicleType','==',filterkey),where('electronicsType','==',filterkey),
+        where('mobileType','==',filterkey),
+        where('propertyType','==',filterkey)
+        ),
+        
+        orderBy('timestamp', 'desc'),
+        endBefore(firstData['timestamp']),
+        limit(pagelimit)
+      );
+    }
+
     const querySnapshot = await getDocs(q);
     const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     setpageno((prevpageno)=>prevpageno-1)
@@ -121,7 +154,7 @@ function Resell(){
   });
 
     return (
-<div>
+<Box >
 {/* <Box sx={{ flexGrow: 1 }}>
       
       <AppBar position="static" sx={{color:'black',backgroundColor:'white',border:'none',boxShadow:'none'}}>
@@ -140,9 +173,9 @@ function Resell(){
       </AppBar>
     </Box> */}
 
-  <Box sx={{ width: '100vw', backgroundColor: 'rgba(173, 216, 230, 0.2)' }}>
-    <Typography sx={{padding:'2vh 2vw',fontWeight:'bold',color:'grey',fontSize:{xs:'12px',sm:'16px',md:'20px'}}}>Browse by categories </Typography>
-    <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+  <Box sx={{  backgroundColor: 'rgba(173, 216, 230, 0.2)', margin:0,p:0}}>
+    <Typography sx={{padding:'2vh 2vw',fontWeight:'bold',color:'grey',fontSize:{xs:'12px',sm:'16px',md:'20px'}}}>Browse by categories </Typography> 
+     <div style={{ display: 'flex', justifyContent: 'space-evenly' ,width:'100vw'}}>
   <Button sx={{ fontSize: { xs: '12px', sm: '16px', md: '20px' }, color: 'black', textTransform: 'none', borderBottom: category === 'Vehicle' ? '3px solid black' : 'none'  }} onClick={() => handleCategoryClick('Vehicle')}>Vehicle</Button>
   <Button sx={{ fontSize: { xs: '12px', sm: '16px', md: '20px' }, color: 'black', textTransform: 'none', borderBottom: category === 'Electronics' ? '3px solid black' : 'none' }} onClick={() => handleCategoryClick('Electronics')}>Electronics</Button>
   <Button sx={{ fontSize: { xs: '12px', sm: '16px', md: '20px' }, color: 'black', textTransform: 'none', borderBottom: category === 'Mobiles' ? '3px solid black' : 'none' }} onClick={() => handleCategoryClick('Mobiles')}>Mobiles</Button>
@@ -188,48 +221,48 @@ function Resell(){
 
 {
   (items!=='undefined' && items!=undefined)?(
-    <Box sx={{paddingBottom:'20px'}}><Box margin={'20px 5px'}>
+    <Box sx={{paddingBottom:'20px'}}><Box margin={'20px 0px'} sx={{width:'100vw'}}>
       {
         (filterkey=='') && (<Box><Typography sx={{margin:'10px 15px',fontWeight:'bold',fontSize: { xs: '14px', sm: '16px', md: '20px' }}}>Fresh recomendations</Typography><br /></Box>)
       }
-    <Grid container spacing={{xs:1,sm:2}} columns={{xs:2,sm:3,md:4}}>
-        {
+    <Grid container spacing={{ xs: 1, sm: 2 }} columns={{xs:2,sm:3,md:4}}>
+  {items.map(item => (
+    <Grid item xs={1} key={item.id} onClick={() => navigate(`/resell/${item.id}`)} sx={{ m:0,p:0 }}>
+      <Card sx={{ maxWidth: 345 }} id="grid_card">
+        <CardActionArea>
+          <CardMedia
+            component="img"
+            height='160'
+            image={item.images[0]}
+            sx={{ objectFit: 'contain' }}
+          />
+          <CardContent sx={{ height: '96px' }}>
+            <Typography gutterBottom variant="h6" component="div" fontWeight={'bold'}>
+              &#8377; {item.price}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ textOverflow: 'ellipsis', overflow: 'hidden', width: '100%', whiteSpace: 'nowrap' }}>
+              {item.category === 'Properties' ? `${item.propertyType} for ${item.transactionType}` : item.model}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ alignItems: 'center', justifyItems: 'center', display: 'flex', mt: '10px' }}>
+              <LocationOnIcon fontSize="small" />
+              {item.address}
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+      </Card>
+    </Grid>
+  ))}
+</Grid>
 
-            items.map(item => (
-                <Grid item xs={1} onClick={()=>navigate(`/resell/${item.id}`)}>
-                  <Card sx={{ maxWidth: 345 }}>
-      <CardActionArea>
-      <CardMedia
-  component="img"
-  height='160'
-  image={item.images[0]}
-  sx={{ objectFit: 'contain' }}
-/>
-{/* <FavoriteIcon fontSize="small" sx={{position:'absolute',top:5,right:5,color:'white'}}/> */}
-        <CardContent>
-          <Typography gutterBottom variant="h6" component="div" fontWeight={'bold'}>
-          &#8377; {item.price}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{textOverflow:'ellipsis',overflow:'hidden',width:'100%',whiteSpace:'nowrap'}}>
-          {item.category === 'Properties' ? `${item.propertyType} for ${item.transactionType}` : item.model}
-          </Typography>
-
-          <Typography variant="body2" color="text.secondary" sx={{alignItems:'center',justifyItems:'center',display:'flex',mt:'10px'}}><LocationOnIcon fontSize="small" />{item.address}</Typography>
-        </CardContent>
-      </CardActionArea>
-    </Card>
-                </Grid>
-            ))        
-            }
-            </Grid>
     </Box>
 
 {
   (items.length!==0)?(
-    <Box sx={{display:'flex',justifyContent:'center',m:'5vh 0',position:'fixed',bottom:0,width:'100%'}}>
+    <Box sx={{display:'flex',justifyContent:'center',mt:'600px',position:'fixed',bottom:0,width:'97vw'}}>
             <Button sx={{margin:'0 1vw'}} startIcon={<ArrowBackIos/>} variant="contained" onClick={prevPage}>Prev</Button>
             <Button sx={{margin:'0 1vw'}} endIcon={<ArrowForwardIos/>} variant="contained" onClick={nextPage}>Next</Button>
       </Box>
+    // <Typography>Hello</Typography>
       ):(
         <Box><Typography sx={{textAlign:'center',marginTop:'5vh'}}>Apologies, but we currently don't have any data available for this category.</Typography></Box>
       )
@@ -240,7 +273,7 @@ function Resell(){
     <LinearProgress />
   )
 }
-    
+  
 
 
 <Box sx={{ position: 'sticky', bottom: 5,  textAlign: 'center' }}>
@@ -262,7 +295,7 @@ function Resell(){
       </Button> */}
     </Box>
 
-</div>
+</Box>
     )
 }
 

@@ -1,81 +1,39 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
 
-import { auth } from '../../config/firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { useState } from 'react';
-import { collection, addDoc,doc ,setDoc} from 'firebase/firestore';
-import { db } from '../../config/firebase'; // Make sure to import your Firestore instance
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import Link from "@mui/material/Link";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 
 const defaultTheme = createTheme();
 
 export default function SignUp() {
   const navigate = useNavigate();
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [userType, setUserType] = useState("vendor"); // Default to "vendor"
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     try {
-      setError(null);
-
-      // Step 1: Create the user in Firebase Authentication
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      // Step 2: Access the user information
-      const user = userCredential.user;
-      console.log('Successfully signed up:', user);
-      console.log('Successfully signed up:', user.uid);
-      
-      const usersCollectionRef = collection(db, 'users');
-      // Step 3: Store additional user data in Firestore
-      // const userDocRef = await addDoc(collection(db, 'users'), {
-      //   uid: user.uid,
-      //   name: name,
-      //   phone: phone,
-      //   email: email,
-      // });
-
-      // console.log('Document written with ID: ', userDocRef.id);
-
-      try {
-        const userDocRef = doc(db, 'users', user.uid);
-        await setDoc(userDocRef, {
-          name: name,
-          phone: phone,
-          email: email,
-        });
-
-        console.log('Document written with ID: ', user.uid);
-      } catch (error) {
-        console.error('Error adding/updating document: ', error);
+      if (userType === "admin") {
+        navigate("/admin"); // Navigate to admin page
+      } else {
+        navigate("/vendor"); // Navigate to vendor page
       }
-
-      localStorage.setItem('user_email', email);
-      localStorage.setItem('uid', user.uid);
-      navigate('/');
-    } catch (error) {
-      console.error('Error signing up:', error.message);
-      setError(error.message); // Set the error message for display
+    } catch (err) {
+      setError("Error signing up"); // Display err message if sign-up fails
     }
   };
 
@@ -86,18 +44,23 @@ export default function SignUp() {
         <Box
           sx={{
             marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <Box
+            component="form"
+            noValidate
+            onSubmit={handleSubmit}
+            sx={{ mt: 3 }}
+          >
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
@@ -150,6 +113,27 @@ export default function SignUp() {
                 />
               </Grid>
             </Grid>
+            <Typography variant="body1">User Type:</Typography>
+            <div>
+              <label>
+                <input
+                  type="radio"
+                  value="admin"
+                  checked={userType === "admin"}
+                  onChange={() => setUserType("admin")}
+                />
+                Admin
+              </label>
+              <label style={{ marginLeft: "20px" }}>
+                <input
+                  type="radio"
+                  value="vendor"
+                  checked={userType === "vendor"}
+                  onChange={() => setUserType("vendor")}
+                />
+                Vendor
+              </label>
+            </div>
             {error && (
               <Typography color="error" variant="body2" sx={{ mt: 1 }}>
                 {error}

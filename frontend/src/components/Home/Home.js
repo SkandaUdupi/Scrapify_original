@@ -45,7 +45,7 @@ function Home(){
 
   useEffect(() => {
     localStorage.setItem('user_email', useremail);    
-  }, [useremail]); 
+  }, [useremail,setUserEmail]); 
 
     return (
        <div>
@@ -53,9 +53,9 @@ function Home(){
         
         <Router>
             <Routes>
-             <Route path="/signin" element={<SignIn/>}/>
+             <Route path="/signin" element={<SignIn setUserEmail={setUserEmail}/>}/>
              <Route path="/signup" element={<SignUp/>}/>
-             <Route path="/resell" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Resell useremail={useremail}/></>}/>
+             <Route path="/" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Resell useremail={useremail}/></>}/>
              <Route path="/rates" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Scrap useremail={useremail}/></>}/>
              <Route path="/sellform" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Sell_Form useremail={useremail}/></>}/>
              <Route path="/editform" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Editform useremail={useremail}/></>}/>
@@ -69,7 +69,7 @@ function Home(){
 
               <Route path="/chat/:receiver" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Chats useremail={useremail}/></>}></Route>
 
-             <Route path="/" element={<Condition useremail={useremail}/>}/>   
+             {/* <Route path="/" element={<Condition useremail={useremail}/>}/>    */}
                
             </Routes>
         </Router>
