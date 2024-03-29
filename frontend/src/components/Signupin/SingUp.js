@@ -63,6 +63,7 @@ export default function SignUp() {
           name: name,
           phone: phone,
           email: email,
+          type: "user"
         });
 
         console.log('Document written with ID: ', user.uid);

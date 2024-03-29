@@ -24,8 +24,8 @@ function Pickup() {
   const [pdate, setpdate] = useState(null);
   const [imagesArray, setImagesArray] = useState([]);
   const [imageflag, setimageflag] = useState('close');
-  const [addressLine1, setAddressLine1] = useState(""); // State variable for address line 1
-  const [addressLine2, setAddressLine2] = useState(""); // State variable for address line 2
+  const [addressLine1, setAddressLine1] = useState(""); 
+  const [addressLine2, setAddressLine2] = useState(""); 
   const [pincode, setPincode] = useState("");
 
 
@@ -51,44 +51,42 @@ function Pickup() {
 
   const handleSubmit = async () => {
     const email = localStorage.getItem('user_email');
-    try {
-      // Upload images to Firebase Storage...
-      const promises = imagesArray.map(async (image) => {
-        const imgRef = ref(imgDB, `Imgs_pick/${v4()}`);
-        const imageData = await fetch(image).then((res) => res.blob());
-        await uploadBytes(imgRef, imageData);
-        const downloadURL = await getDownloadURL(imgRef);
-        console.log("Download URL:", downloadURL);
-        return downloadURL;
-      });
+  try {
+    
+    const promises = imagesArray.map(async (image) => {
+      const imgRef = ref(imgDB, `Imgs_pick/${v4()}`);
+      const imageData = await fetch(image).then((res) => res.blob());
+      await uploadBytes(imgRef, imageData);
+      const downloadURL = await getDownloadURL(imgRef);
+      console.log("Download URL:", downloadURL);
+      return downloadURL;
+    });
 
-      const downloadURLs = await Promise.all(promises);
-      console.log("All URLs:", downloadURLs);
+    const downloadURLs = await Promise.all(promises);
+    console.log("All URLs:", downloadURLs);
 
-      // Construct address object
-      const address = {
-        addressLine1: addressLine1,
-        addressLine2: addressLine2,
-        pincode: pincode
-      };
+    const address = {
+      addressLine1: addressLine1,
+      addressLine2: addressLine2,
+      pincode: pincode
+    };
 
-      // Construct pickup data object
-      const pickupData = {
-        email : email,
-        date: pdate,
-        images: downloadURLs,
-        address: address
-      };
+    const pickupData = {
+      email: email,
+      date: pdate,
+      images: downloadURLs,
+      address: address,
+      latitude: latitude,
+      longitude: longitude
+    };
 
-      // Store pickup data in Firestore
-      await addDoc(collection(db, "pickupDoc"), pickupData);
-      
-      // Handle successful submission
-      console.log("Pickup confirmed!");
-      console.log(pickupData)
-    } catch (error) {
-      console.error("Error submitting pickup:", error);
-    }
+    await addDoc(collection(db, "pickupDoc"), pickupData);
+
+    console.log("Pickup confirmed!");
+    console.log(pickupData);
+  } catch (error) {
+    console.error("Error submitting pickup:", error);
+  }
   };
 
   return (
