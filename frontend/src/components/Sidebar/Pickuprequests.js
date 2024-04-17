@@ -1,31 +1,34 @@
 import { Download } from "@mui/icons-material";
 import { Box, Button, Divider, Stack, Typography } from "@mui/material";
 import React from "react";
+
 import { db } from "../../config/firebase";
-
+import { getDocs } from "firebase/firestore";
+import { collection } from "firebase/firestore";
 import { useEffect,useState } from "react";
-
-
+     
 function Pickuprequests(){
 
-    // const pickups = [
-    //     { pickupid: 1, date: '2022-01-15', totalPrice: 150, scrapsSold: [{ item: 'Paper', quantity: 10 }, { item: 'Metal', quantity: 5 }] },
-    //     { pickupid: 2, date: '2022-02-01', totalPrice: 200, scrapsSold: [{ item: 'Plastic', quantity: 15 }, { item: 'Glass', quantity: 10 }] },
-    //     { pickupid: 3, date: '2022-03-10', totalPrice: 180, scrapsSold: [{ item: 'Cardboard', quantity: 8 }, { item: 'Aluminum', quantity: 10 }] },
-    //   ];
+    const pickups2 = [
+        { pickupid: 1, date: '2022-01-15', totalPrice: 150, scrapsSold: [{ item: 'Paper', quantity: 10 }, { item: 'Metal', quantity: 5 }] },
+        { pickupid: 2, date: '2022-02-01', totalPrice: 200, scrapsSold: [{ item: 'Plastic', quantity: 15 }, { item: 'Glass', quantity: 10 }] },
+        { pickupid: 3, date: '2022-03-10', totalPrice: 180, scrapsSold: [{ item: 'Cardboard', quantity: 8 }, { item: 'Aluminum', quantity: 10 }] },
+      ];  
 
-    const [pickups, setPickups] = useState([]);
+      const [pickups, setPickups] = useState([]);
 
-    useEffect(() => {
-        // Fetch data from Firebase database
+      useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await db.ref("pickups").once("value");
-                const data = response.val();
-                if (data) {
-                    const pickupsArray = Object.values(data);
-                    setPickups(pickupsArray);
-                }
+                const querySnapshot = await getDocs(collection(db, "pickups"));
+                const pickArray = [];
+
+                querySnapshot.forEach((doc) => {
+                    pickArray.push(doc.data());
+                });
+
+                setPickups(pickArray);
+                console.log(pickups)
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -40,10 +43,10 @@ function Pickuprequests(){
         <Box>
             
             {
-                (pickups.length!=0) ? (<>
+                (pickups2.length!=0) ? (<>
                 <Box sx={{margin:'5vh',display:'flex',flexDirection:'column',alignItems:'center'}}>
                 <Typography fontWeight={'bolder'}>Your pickup requests</Typography>
-                {pickups.map((pick)=>(
+                {pickups2.map((pick)=>(
                         <Box sx={{width:'70vw',minheight:{xs:'140px',sm:'160px'},border:'0.8px solid grey',borderRadius:'5px',mt:'4vh',padding:'2vh 5vw',backgroundColor:'rgba(200, 200, 200, 0.07)'
                         }}>
 
