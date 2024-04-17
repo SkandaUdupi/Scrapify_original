@@ -50,6 +50,8 @@ function Pickup() {
   });
 
   const handleSubmit = async () => {
+    const randomNum = Math.floor(1000 + Math.random() * 9000);
+
     const email = localStorage.getItem('user_email');
   try {
     
@@ -72,6 +74,7 @@ function Pickup() {
     };
 
     const pickupData = {
+      otp: randomNum, 
       email: email,
       date: pdate,
       images: downloadURLs,

@@ -1,15 +1,38 @@
 import { Download } from "@mui/icons-material";
 import { Box, Button, Divider, Stack, Typography } from "@mui/material";
 import React from "react";
+import { db } from "../../config/firebase";
+
+import { useEffect,useState } from "react";
 
 
 function Pickuprequests(){
 
-    const pickups = [
-        { pickupid: 1, date: '2022-01-15', totalPrice: 150, scrapsSold: [{ item: 'Paper', quantity: 10 }, { item: 'Metal', quantity: 5 }] },
-        { pickupid: 2, date: '2022-02-01', totalPrice: 200, scrapsSold: [{ item: 'Plastic', quantity: 15 }, { item: 'Glass', quantity: 10 }] },
-        { pickupid: 3, date: '2022-03-10', totalPrice: 180, scrapsSold: [{ item: 'Cardboard', quantity: 8 }, { item: 'Aluminum', quantity: 10 }] },
-      ];
+    // const pickups = [
+    //     { pickupid: 1, date: '2022-01-15', totalPrice: 150, scrapsSold: [{ item: 'Paper', quantity: 10 }, { item: 'Metal', quantity: 5 }] },
+    //     { pickupid: 2, date: '2022-02-01', totalPrice: 200, scrapsSold: [{ item: 'Plastic', quantity: 15 }, { item: 'Glass', quantity: 10 }] },
+    //     { pickupid: 3, date: '2022-03-10', totalPrice: 180, scrapsSold: [{ item: 'Cardboard', quantity: 8 }, { item: 'Aluminum', quantity: 10 }] },
+    //   ];
+
+    const [pickups, setPickups] = useState([]);
+
+    useEffect(() => {
+        // Fetch data from Firebase database
+        const fetchData = async () => {
+            try {
+                const response = await db.ref("pickups").once("value");
+                const data = response.val();
+                if (data) {
+                    const pickupsArray = Object.values(data);
+                    setPickups(pickupsArray);
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
       
       
     return(
