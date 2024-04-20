@@ -7,7 +7,7 @@ import { getDocs } from "firebase/firestore";
 import { collection } from "firebase/firestore";
 import { useEffect,useState } from "react";
      
-function Pickuprequests(){
+const Pickuprequests = ()=>{
 
     const pickups2 = [
         { pickupid: 1, date: '2022-01-15', totalPrice: 150, scrapsSold: [{ item: 'Paper', quantity: 10 }, { item: 'Metal', quantity: 5 }] },
@@ -25,7 +25,7 @@ function Pickuprequests(){
 
                 querySnapshot.forEach((doc) => {
                     pickArray.push(doc.data());
-                });
+                });  
 
                 setPickups(pickArray);
                 console.log(pickups)
@@ -36,7 +36,7 @@ function Pickuprequests(){
 
         fetchData();
     }, []);
-      
+  
       
     return(
         <>

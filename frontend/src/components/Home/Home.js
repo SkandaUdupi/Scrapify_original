@@ -18,6 +18,7 @@ import Myads from "../Olx/Myads";
 import SignUp from "../Signupin/SingUp";
 import SignIn from "../Signupin/SignIn";
 import Navbar from "../Sidebar/Navbar";
+import ForgotPassword from "../Signupin/ForgotPassword";
 
 import { Route , Routes , BrowserRouter as Router, Navigate, useNavigate,Link} from "react-router-dom";
 import { useState,useEffect } from 'react';
@@ -55,6 +56,7 @@ function Home(){
             <Routes>
              <Route path="/signin" element={<SignIn setUserEmail={setUserEmail}/>}/>
              <Route path="/signup" element={<SignUp/>}/>
+             <Route path="/forgot-password" element={<ForgotPassword />} />
              <Route path="/" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Resell useremail={useremail}/></>}/>
              <Route path="/rates" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Scrap useremail={useremail}/></>}/>
              <Route path="/sellform" element={<><Navbar useremail={useremail} handleLogout={handleLogout}/><Sell_Form useremail={useremail}/></>}/>
