@@ -1,15 +1,21 @@
 import { CloudUpload } from "@mui/icons-material";
-import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, Typography } from "@mui/material";
+import { Avatar, Box, Button, Dialog,Input, DialogActions, DialogContent, DialogTitle, Divider, IconButton, Typography } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { db } from '../../config/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { v4 as uuidv4 } from "uuid"; // Import v4 as uuidv4 alias
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { imgDB } from "../../config/firebase";
-
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment'
+import EditIcon from '@mui/icons-material/Edit';
+import FilledInput from '@mui/material/FilledInput';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import CheckIcon from '@mui/icons-material/Check';
+import ClearIcon from '@mui/icons-material/Clear';
 function Dialog1({ open1, handleClose, setProfileImg }) {
   const [imageSrc, setImageSrc] = useState(null);
-
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -85,6 +91,8 @@ function Profile() {
   const [profileImg, setProfileImg] = useState(null);
   const [open1, setOpen1] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [upiId,setUpiId] = useState("");
+  const [openedit,setopenedit]=useState(false);
 
   const handleClose = () => {
     setOpen1(false);
@@ -115,7 +123,21 @@ function Profile() {
     } else {
       console.log('User UID not found in local storage');
     }
-  }, []);
+  }, [openedit]);
+
+  const handleSaveUpiId = async() => {
+    const uid = localStorage.getItem('uid');
+    try {
+      const userDocRef = doc(db, 'users',uid);
+      await setDoc(userDocRef, { upi_id: upiId }, { merge: true });
+      setopenedit(false)
+      console.log("UPI ID saved successfully!");
+    }catch(err) {
+      console.error("Error saving UPI ID:", err);
+    }
+  } 
+
+ 
 
   return (
     <>
@@ -137,6 +159,54 @@ function Profile() {
             <Box><Typography sx={{ color: 'grey' }}>Email address</Typography>
               <Typography>{userData ? userData.email : 'Loading...'}</Typography>
             </Box>
+          </Box>
+          <Box>
+          <Box>
+
+          <Divider sx={{margin:'2vh 0'}}/>
+
+
+  <Typography sx={{ color: 'grey' }}>UPI Id</Typography>
+  {/* <FormControl fullWidth variant="filled">
+    <InputLabel htmlFor="upi-id">Enter UPI ID</InputLabel>
+    <FilledInput
+      id="upi-id"
+      value={userData ? userData.upi_id : ' '}
+      onChange={(e) => setUpiId(e.target.value)}
+      endAdornment={
+        <InputAdornment position="end">
+          <Button onClick={handleSaveUpiId}><EditIcon /></Button>
+        </InputAdornment>
+      }
+    />
+  </FormControl> */}
+  {
+    (userData) && (<Box sx={{display:'flex',justifyContent:'space-evenly'}}>
+    {/* <Typography>{(userData.upi_id!=undefined) ? userData.upi_id : 'Add a new UPI ID'}</Typography>  */}
+    {(userData.upi_id!=undefined) ?(<><Typography> {userData.upi_id} </Typography><Button  onClick={()=>setopenedit(true)} sx={{display:openedit ? "none": "block"}}><EditIcon /></Button></>): (<Button onClick={()=>setopenedit(true)} sx={{display:openedit ? "none": "block"}}>Add a new UPI ID</Button>)} 
+    
+    </Box>)
+  }
+  {
+    (openedit) && (
+      (<> <FormControl fullWidth variant="filled">
+    <InputLabel htmlFor="upi-id">Enter UPI ID</InputLabel>
+    <FilledInput
+      id="upi-id"
+      placeholder={(userData.upi_id!=undefined) ? userData.upi_id : 'example@upi'}
+      onChange={(e) => setUpiId(e.target.value)}
+      endAdornment={
+        <InputAdornment position="end">
+          <Button onClick={handleSaveUpiId}><CheckIcon /></Button>
+          <Button onClick={()=>setopenedit(false)}><ClearIcon /></Button>
+        </InputAdornment>
+      }
+    />
+  </FormControl></>) 
+    )
+  }
+</Box>
+
           </Box>
         </Box>
       </Box>

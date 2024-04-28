@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, ImageList, ImageListItem, Typography, CircularProgress, TextField } from "@mui/material";
+import { Box, Button, IconButton, ImageList, ImageListItem, Typography, CircularProgress, TextField, Select, MenuItem } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import React, { useState } from "react";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -9,7 +9,6 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "./map.css";
 import { Icon } from "leaflet";
-
 //
 import { collection, addDoc, doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../config/firebase";
@@ -27,7 +26,21 @@ function Pickup() {
   const [addressLine1, setAddressLine1] = useState(""); 
   const [addressLine2, setAddressLine2] = useState(""); 
   const [pincode, setPincode] = useState("");
+  // const [prediction,setprediction]=useState([]);
 
+  // const classes = ['cardboard', 'ewaste', 'glass', 'metal', 'paper', 'plastic', 'trash']
+
+  
+  // const handleClassSelect = (event) => {
+  //   const selectedClass = event.target.value;
+  //   if (!prediction.includes(selectedClass)) {
+  //     setprediction([...prediction, selectedClass]);
+  //   }
+  // };
+
+  // const handleRemoveClass = (classToRemove) => {
+  //   setprediction(prediction.filter((cls) => cls !== classToRemove));
+  // };
 
   const handleDeleteimage = (index) => {
     setImagesArray((prevImages) => prevImages.filter((_, i) => i !== index));
@@ -48,6 +61,27 @@ function Pickup() {
     iconUrl: require("./marker.webp"),
     iconSize: [30, 30],
   });
+
+  // const performPrediction = async () => {
+
+  //   const response = await fetch('http://127.0.0.1:5000/predict_images', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     body: JSON.stringify({ urls: imagesArray})
+  //   });
+  //   const data = await response.json();
+  //   setprediction(data.prediction);
+  // }
+
+  // useEffect(()=>{
+  //   if (imagesArray.length > 0) {
+  //     performPrediction();
+  //     console.log("call made to python server")
+  //   }
+  // },[imagesArray])
+
 
   const handleSubmit = async () => {
     const email = localStorage.getItem('user_email');
@@ -167,7 +201,30 @@ function Pickup() {
         </Box>
 
         <Box sx={{ m: '3vh 0', border: '1px solid grey', borderRadius: '5px', width: { xs: "90vw", sm: "70vw" } }}>
-          <Box><Typography sx={{ mb: '1vh', height: '5vh', backgroundColor: 'rgba(144, 238, 144, 0.8);', fontWeight: 'bolder', fontSize: { xs: '14px', sm: '16px' }, p: '0vh 0' }}>Upload images</Typography></Box>
+          <Box><Typography sx={{ mb: '1vh', height: '5vh', backgroundColor: 'rgba(144, 238, 144, 0.8);', fontWeight: 'bolder', fontSize: { xs: '14px', sm: '16px' }, p: '0vh 0' }}>Upload images</Typography>
+          {/* {
+            (prediction.length!=0) && (imagesArray.length!=0) && (
+              <Box>
+                 <Select
+        label="Select Class"
+        onChange={handleClassSelect}
+        style={{ minWidth: 120, marginRight: 16 }}
+      >
+        {classes.map((cls) => (
+          <MenuItem key={cls} value={cls}>
+            {cls}
+          </MenuItem>
+        ))}
+      </Select>
+      {prediction.map((cls) => (
+        <Button variant="outlined" key={cls} onClick={() => handleRemoveClass(cls)} style={{ margin: 8 }}>
+          {cls}
+        </Button>
+      ))}
+              </Box>
+            )
+          } */}
+          </Box>
           <Box sx={{ m: '0vh 0' }}>
             <Box sx={{ border: '1px solid black' }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
