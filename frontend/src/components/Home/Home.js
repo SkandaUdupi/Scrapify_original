@@ -20,7 +20,7 @@ import SignIn from "../Signupin/SignIn";
 import Navbar from "../Sidebar/Navbar";
 import ForgotPassword from "../Signupin/ForgotPassword";
 
-import { Route , Routes , BrowserRouter as Router, Navigate, useNavigate,Link} from "react-router-dom";
+import { Route , Routes , HashRouter as Router, Navigate, useNavigate,Link} from "react-router-dom";
 import { useState,useEffect } from 'react';
 import Editform from "../Olx/Editform";
 import Chatroom from "../Olx/Chat/Chatroom";
