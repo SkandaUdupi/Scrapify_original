@@ -22,7 +22,7 @@ const Sell_Form = () => {
   return (
     <Box maxWidth="sm" sx={{margin:'2vh auto'}}>
         <Typography textAlign={'center'} margin={'2vh 0'} fontWeight={'bolder'}>What are you offering ??</Typography>
-        <Typography> ** photo upload section has to be done </Typography>
+        {/* <Typography> ** photo upload section has to be done </Typography> */}
          <Grid container justifyContent="center" mt={2} spacing={1} mb={4}>
         <Grid item xs={12} sm={6}>
           <Button

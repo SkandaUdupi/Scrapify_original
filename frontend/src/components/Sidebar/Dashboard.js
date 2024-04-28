@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef , useState} from "react";
 import { Box } from "@mui/material";
 import {
   List,
@@ -22,7 +22,11 @@ import {
   Recycling,
   Chat
 } from "@mui/icons-material";
+import { collection } from "firebase/firestore";
+import { db } from "../../config/firebase";
+import { getDocs,query,where } from "firebase/firestore";
 const Dashboard = ({onClose,useremail,handleLogout}) => {
+  const [customerInfo, setCustomerInfo] = useState({});
 
   const dashboardRef = useRef();
   const logkey = (useremail == null || useremail == undefined || useremail == undefined || useremail=='null') ? false : true;
@@ -40,17 +44,42 @@ const Dashboard = ({onClose,useremail,handleLogout}) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [onClose]);
+
+  useEffect(() => {
+    const fetchCustomerId = async () => {
+      try {
+        const usersCollectionRef = collection(db, "users");
+        const querySnapshot = await getDocs(
+          query(usersCollectionRef, where("email", "==", useremail))
+        );
+        if (!querySnapshot.empty) {
+          querySnapshot.forEach((doc) => {
+            console.log(doc.data());
+            setCustomerInfo(doc.data());
+
+          });
+        } else {
+          console.log("No matching user found!");
+        }
+       
+      } catch (err) {
+        console.error("Error fetching user document:", err);
+      }
+    };
+
+    fetchCustomerId();
+  }, [useremail]);
   return (
     
       <Box ref={dashboardRef} flex={1}  sx={{width:'210px',height:'100vh',backgroundColor:'rgba(216, 255, 224, 1)' ,position:'fixed',top:0,left:0 ,zIndex:'10',color:'#333333'}} >
       <List>
         <ListItem alignItems="flex-start">
           <ListItemAvatar>
-            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+            <Avatar alt={customerInfo.name} src={customerInfo.name} />
           </ListItemAvatar>
           <ListItemText
             secondary={<React.Fragment>{"Welcome"}</React.Fragment>}
-            primary="Name"
+            primary={customerInfo.name}
           />
         </ListItem>
         {/* <Divider variant="inset" component="li" /> */}

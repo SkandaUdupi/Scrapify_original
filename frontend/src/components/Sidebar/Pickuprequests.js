@@ -1,74 +1,136 @@
 import { Download } from "@mui/icons-material";
 import { Box, Button, Divider, Stack, Typography } from "@mui/material";
-import React from "react";
-
-import { db } from "../../config/firebase";
-import { getDocs } from "firebase/firestore";
+import React, { useState , useEffect, useRef } from "react";
 import { collection } from "firebase/firestore";
-import { useEffect,useState } from "react";
-     
-const Pickuprequests = ()=>{
+import { db } from "../../config/firebase";
+import { getDocs,query } from "firebase/firestore";
 
-    const pickups2 = [
-        { pickupid: 1, date: '2022-01-15', totalPrice: 150, scrapsSold: [{ item: 'Paper', quantity: 10 }, { item: 'Metal', quantity: 5 }] },
-        { pickupid: 2, date: '2022-02-01', totalPrice: 200, scrapsSold: [{ item: 'Plastic', quantity: 15 }, { item: 'Glass', quantity: 10 }] },
-        { pickupid: 3, date: '2022-03-10', totalPrice: 180, scrapsSold: [{ item: 'Cardboard', quantity: 8 }, { item: 'Aluminum', quantity: 10 }] },
-      ];  
+function Pickuprequests(){
 
-      const [pickups, setPickups] = useState([]);
+    const [pickups, setPickups] = useState([]);
+    // const [isDataFetched, setIsDataFetched] = useState(false);
+    const isFirstRun = useRef(true);
 
-      useEffect(() => {
-        const fetchData = async () => {
+    useEffect(() => {
+        const fetchPickups = async () => {
             try {
-                const querySnapshot = await getDocs(collection(db, "pickups"));
-                const pickArray = [];
-
-                querySnapshot.forEach((doc) => {
-                    pickArray.push(doc.data());
-                });  
-
-                setPickups(pickArray);
-                console.log(pickups)
+                const pickupsCollectionRef = collection(db, "pickupDoc");
+                const querySnapshot = await getDocs(query(pickupsCollectionRef));
+    
+                const pickupData = querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+    
+                const notPickedPickups = pickupData.filter(pickup => pickup.picked === false);
+    
+                console.log("Pickups not picked:", notPickedPickups);
+                setPickups(notPickedPickups);
+                if (!isFirstRun.current) {
+                    const pickedPickups = pickupData.filter(pickup => pickup.picked === true);
+                    if (pickedPickups.length > 0) {
+                        const uid = localStorage.getItem('uid');
+                        const paymentCollectionRef = collection(db, "payment");
+                        const paymentQuerySnapshot = await getDocs(query(paymentCollectionRef));
+                        const paymentData = paymentQuerySnapshot.docs
+                            .map(doc => ({
+                                id: doc.id,
+                                ...doc.data()
+                            }))
+                            .filter(payment => payment.userId === uid);
+                        console.log("Picked pickups payment info :", paymentData);
+                        
+                        setPickups(prevPickups => [...prevPickups, ...paymentData]);
+                    
+                    }
+                }
+                isFirstRun.current = false;
             } catch (error) {
-                console.error("Error fetching data:", error);
+                console.error("Error fetching pickups and payment data:", error);
             }
         };
-
-        fetchData();
+        console.log("Overall pickups:",pickups)
+        fetchPickups();
     }, []);
-  
       
+
+    function Bill({pick}){
+       return(
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <thead>
+          <tr style={{ borderBottom: "0.5px solid grey" }}>
+            <th style={{ padding: "8px", color: "grey" }}>Item</th>
+            <th style={{ padding: "8px", color: "grey" }}>qty</th>
+            <th style={{ padding: "8px", color: "grey" }}>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          {pick.material_info.map((item, index) => (
+            <tr key={index}>
+              <td style={{ textAlign: "center", padding: "10px" }}>{item.subcat}</td>
+              <td style={{ textAlign: "center", padding: "10px" }}>{item.quantity}</td>
+              <td style={{ textAlign: "center", padding: "10px" }}>{item.tprice}</td>
+            </tr>
+          ))}
+          <tr style={{ borderTop: "1px dotted grey", margin: "10px 0" }}>
+            <td style={{ textAlign: "center", padding: "10px", fontWeight: "bold", color: "grey" }}>Total</td>
+            <td></td>
+            <td style={{ textAlign: "center", padding: "10px", fontWeight: "bolder" ,color:'rgb(11, 225, 44)' }}>&#x20B9;{pick.amount.toFixed(2)}</td>
+          </tr>
+        </tbody>
+      </table>
+       )
+    }
+
+    const [showBillComponents, setShowBillComponents] = useState(Array(pickups.length).fill(false));
+
+    const toggleBillComponent = (index) => {
+        const newShowBillComponents = [...showBillComponents];
+        newShowBillComponents[index] = !newShowBillComponents[index];
+        setShowBillComponents(newShowBillComponents);
+      };
+
     return(
         <>
         <Box>
             
             {
-                (pickups2.length!=0) ? (<>
+                (pickups.length!=0) ? (<>
                 <Box sx={{margin:'5vh',display:'flex',flexDirection:'column',alignItems:'center'}}>
                 <Typography fontWeight={'bolder'}>Your pickup requests</Typography>
-                {pickups2.map((pick)=>(
+                {pickups.map((pick,index)=>(
                         <Box sx={{width:'70vw',minheight:{xs:'140px',sm:'160px'},border:'0.8px solid grey',borderRadius:'5px',mt:'4vh',padding:'2vh 5vw',backgroundColor:'rgba(200, 200, 200, 0.07)'
                         }}>
 
-                            <Box display={'flex'} justifyContent={'space-between'} mb={'1vh'}>
-
-                                <Typography color={'grey'}>{pick.date}</Typography>
-                                <Typography color={'grey'}>Id: {pick.pickupid}</Typography>
+                            <Box display={'flex'} justifyContent={'space-between'} mb={'1vh'} sx={{flexDirection:{xs:'column',sm:'row'}}}>
+                            <Typography color={'grey'} fontWeight={'bold'}>{pick.picked !== undefined ? pick.id : pick.pickupId}</Typography>
+                                <Typography color={'grey'}>{pick.picked !== undefined ? pick.date : new Date(pick.date.seconds * 1000).toLocaleDateString('en-GB')}</Typography>
                             </Box>
                             
-                            <Typography color={'rgb(11, 225, 44)'} fontWeight={'bolder'} fontSize={'20px'}>&#8377;&nbsp;{pick.totalPrice}</Typography>
+                            {
+                                pick.picked !== undefined ? (<Typography color={'red'} fontWeight={'bolder'} fontSize={'20px'}>OTP : &nbsp;{pick.otp}</Typography>):(<Typography color={'rgb(11, 225, 44)'} fontWeight={'bolder'} fontSize={'20px'}>&#8377;&nbsp;{pick.amount}</Typography>)
+                            }
                             <Divider sx={{margin:'2vh 0'}}/>
                          
                             
-  <ul style={{ listStyle: 'none', display: 'flex', flexWrap: 'wrap' }}>
-    {pick.scrapsSold.map((scrap) => (
-        <li style={{padding:'0 1vw',borderRight:'1px solid rgb(11, 225, 44)'}}>{scrap.item}</li>
-    ))}
-  </ul>
+                    {/* <ul style={{ listStyle: 'none', display: 'flex', flexWrap: 'wrap' }}>
+                        {pick.scrapsSold.map((scrap) => (
+                            <li style={{padding:'0 1vw',borderRight:'1px solid rgb(11, 225, 44)'}}>{scrap.item}</li>
+                        ))}
+                    </ul> */}
 
-                  <Box sx={{display:'flex',justifyContent:'end',marginTop:'2vh'}}>
-                    <Button sx={{fontWeight:'bold',backgroundColor:'rgba(73, 159, 242, 0.8)',color:'white'}} startIcon={<Download/>}>Bill</Button>
-                    </Box>         
+                    {
+                        pick.picked!=undefined?(<Typography color={'grey'}>Your pickup has not been collected yet.
+                            <br />Share the above OTP when the vendor arrives
+                        </Typography>):(
+                       <>
+                        
+                        <Button onClick={() => toggleBillComponent(index)} >View Bill</Button>
+                        {showBillComponents[index] && <Bill pick={pick}/>}
+                        </>
+                        
+                    )
+                    }
                         </Box>
                     ))}
                 </Box>
@@ -78,8 +140,9 @@ const Pickuprequests = ()=>{
                     <Button sx={{textTransform:'none',color:'white',fontWeight:'bolder',backgroundColor:'rgb(11, 225, 44)',padding:'10px',margin:'5vh 0'}}>Raise pickup request</Button>
                 </Box>
                 </>)
-            }
+}
         </Box>
+       
         </>
     )
 }
