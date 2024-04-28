@@ -13,16 +13,16 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../../config/firebase';
 import { useState, useEffect } from "react";
-
+import { Link as RouterLink } from 'react-router-dom';
 //firebase
-import { auth } from '../../config/firebase'; 
+import { auth } from '../../config/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 //
 import { doc, getDoc } from 'firebase/firestore';
 
 const defaultTheme = createTheme();
 
-export default function SignIn({setUserEmail}) {
+export default function SignIn({ setUserEmail }) {
   const navigate = useNavigate();
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -42,20 +42,20 @@ export default function SignIn({setUserEmail}) {
       localStorage.setItem('user_email', email);
       setUserEmail(email)
       const uid = localStorage.getItem('uid');
-      
+
       if (uid) {
         const getUserData = async () => {
           try {
-            const userDocRef = doc(db,'users',uid);
+            const userDocRef = doc(db, 'users', uid);
             getDoc(userDocRef)
-            .then((doc)=>{
-              console.log(doc.data().email);
-            })
+              .then((doc) => {
+                console.log(doc.data().email);
+              })
           } catch (error) {
             console.error('Error fetching user data:', error.message);
           }
         };
-  
+
         getUserData();
       } else {
         console.log('User UID not found in local storage');
@@ -128,7 +128,7 @@ export default function SignIn({setUserEmail}) {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                <Link component={RouterLink} to="/forgot-password" variant="body2">
                   Forgot password?
                 </Link>
               </Grid>
