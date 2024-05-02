@@ -8,8 +8,8 @@ import { getDocs,query } from "firebase/firestore";
 function Pickuprequests(){
 
     const [pickups, setPickups] = useState([]);
-    // const [isDataFetched, setIsDataFetched] = useState(false);
-    const isFirstRun = useRef(true);
+    const [isDataFetched, setIsDataFetched] = useState(false);
+    // const isFirstRun = useRef(true);
 
     useEffect(() => {
         const fetchPickups = async () => {
@@ -17,19 +17,24 @@ function Pickuprequests(){
                 const pickupsCollectionRef = collection(db, "pickupDoc");
                 const querySnapshot = await getDocs(query(pickupsCollectionRef));
     
+                const uid = localStorage.getItem('uid');
+                const user_email=localStorage.getItem('user_email');
+                console.log(user_email,uid)
+
                 const pickupData = querySnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
-                }));
+                })).filter(pickup => pickup.email === user_email);
     
                 const notPickedPickups = pickupData.filter(pickup => pickup.picked === false);
     
                 console.log("Pickups not picked:", notPickedPickups);
                 setPickups(notPickedPickups);
-                if (!isFirstRun.current) {
+                // if (!isFirstRun.current) {
+                    if(!isDataFetched){
                     const pickedPickups = pickupData.filter(pickup => pickup.picked === true);
                     if (pickedPickups.length > 0) {
-                        const uid = localStorage.getItem('uid');
+                        
                         const paymentCollectionRef = collection(db, "payment");
                         const paymentQuerySnapshot = await getDocs(query(paymentCollectionRef));
                         const paymentData = paymentQuerySnapshot.docs
@@ -44,7 +49,8 @@ function Pickuprequests(){
                     
                     }
                 }
-                isFirstRun.current = false;
+                setIsDataFetched(true)
+                // isFirstRun.current = false;
             } catch (error) {
                 console.error("Error fetching pickups and payment data:", error);
             }

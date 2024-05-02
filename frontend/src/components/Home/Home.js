@@ -41,6 +41,7 @@ function Home(){
 
   const handleLogout = () => {
     localStorage.removeItem("uid");
+    localStorage.removeItem("user_email")
     setUserEmail(null);
   };
 
