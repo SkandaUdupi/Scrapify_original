@@ -28,6 +28,7 @@ function Pickup() {
   const [pincode, setPincode] = useState("");
   // const [prediction,setprediction]=useState([]);
 
+  const navigate=useNavigate();
   // const classes = ['cardboard', 'ewaste', 'glass', 'metal', 'paper', 'plastic', 'trash']
 
   
@@ -42,7 +43,7 @@ function Pickup() {
   //   setprediction(prediction.filter((cls) => cls !== classToRemove));
   // };
 
-  const handleDeleteimage = (index) => {
+  const handleDeleteimage =   (index) => {
     setImagesArray((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
@@ -114,13 +115,15 @@ function Pickup() {
       images: downloadURLs,
       address: address,
       latitude: latitude,
-      longitude: longitude
+      longitude: longitude,
+      picked:false
     };
 
     await addDoc(collection(db, "pickupDoc"), pickupData);
 
     console.log("Pickup confirmed!");
     console.log(pickupData);
+    navigate("/pickuprequests")
   } catch (error) {
     console.error("Error submitting pickup:", error);
   }
