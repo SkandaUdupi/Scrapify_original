@@ -69,31 +69,7 @@ const CategoryList = ({ onClick }) => {
   };
   return (
     <Grid container sx={{ marginBottom: "3vh" }} spacing={4}>
-      <Grid item>
-        <Card elevation={1}>
-          <CardHeader title="Add Category" />
-
-          <CardContent>
-            <Stack direction="row" alignItems="bottom" spacing={2}>
-              <FormControl>
-                <FormLabel sx={{ fontWeight: "bold" }}>Material:</FormLabel>
-                <Input
-                  placeholder="Type in here…"
-                  variant="outlined"
-                  onChange={onMaterialInput}
-                  value={input}
-                />
-              </FormControl>
-              <CardActions>
-                <IconButton onClick={onAddCategory}>
-                  <AddIcon />
-                </IconButton>
-              </CardActions>
-            </Stack>
-          </CardContent>
-        </Card>
-      </Grid>
-      <CategoryCard category={categories} onClick={onSelectCategory} />
+    
     </Grid>
   );
 };
