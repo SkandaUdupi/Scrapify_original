@@ -45,7 +45,7 @@ const CategoryList = ({ onClick }) => {
   //   // Add more categories as needed
   // ];
 
-  const [categories, setCategories] = useState(category); //managing data from/to category object
+  // const [categories, setCategories] = useState(category); //managing data from/to category object
   const [input, setInput] = useState(""); //managing user input of materials
 
   const onMaterialInput = (e) => {
